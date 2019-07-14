@@ -1,0 +1,56 @@
+﻿Bước cài đặt SSH 
+
+Bước 1: Tạo public key, private key
+	ssh-keygen -t rsa 
+	Generating public/private rsa key pair.
+	Enter file in which to save the key (/root/.ssh/id_rsa): 
+	Created directory '/root/.ssh'.
+	Enter passphrase (empty for no passphrase): 
+	Enter same passphrase again: 
+	Your identification has been saved in /root/.ssh/id_rsa.
+	Your public key has been saved in /root/.ssh/id_rsa.pub.
+	The key fingerprint is:
+	SHA256:mexRlir0uqq8ghn8moUiSCnQOedeDmiJphggR0FxrOs root@act-virtual-machine
+	The key's randomart image is:
+	+---[RSA 2048]----+
+	| .=+.            |
+	| o o.      .     |
+	|+ =.. .   +      |
+	|+oo* . o *       |
+	|=++.o o S        |
+	|O+o. + + .       |
+	|B=... o .        |
+	|*.E.   .         |
+	| +=o...          |
+	+----[SHA256]-----+
+Bước 2: Tạo thư mục lưu trữ key và add key cho user cấp quyền SSH
+	root@act-virtual-machine:/home/thang/ftp/files# mkdir -p ~/.ssh
+	root@act-virtual-machine:/home/thang/ftp/files# touch ~/.ssh/authorized_keys
+	root@act-virtual-machine:/home/thang/ftp/files# scp /root/.ssh/id_rsa.pub thang@192.168.88.146:
+	The authenticity of host '192.168.88.146 (192.168.88.146)' can't be established.
+	ECDSA key fingerprint is SHA256:pzn1fPZ9l2EVyurKJx27YK/lDyhUTFyzRKFToCux4SM.
+	Are you sure you want to continue connecting (yes/no)? yes
+	Warning: Permanently added '192.168.88.146' (ECDSA) to the list of known hosts.
+	thang@192.168.88.146's password: 
+	id_rsa.pub                                 100%  406     0.4KB/s   00:00    
+	root@act-virtual-machine:/home/thang/ftp/files# cat /root/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+	root@act-virtual-machine:/home/thang/ftp/files# more ~/.ssh/authorized_keys
+	ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCnT1t7nHyfNDG98GXErQBj7ihyoRX8/nV1ffcJU
+	+qNTIl2A3DVZW92JeYIBsRVR9xiJoJUJ88sIwBBj1I15/h1VDufQwk/WF++ayjMMmRCfF73msF/5F
+	8hawsgZgijATX+wun1q7UI/bPCLxn431OK8Ifgo7AK7/ZId/oHs7PPOxm2Scl/tgaNMIs617EMJdf
+	ALN3BEdvlPSMwXVJElK8lp5gj/QfWCvmSaXUkQf5OtNVh/V8OVk0lqaH5R5rz5F5j92JvBgtvIp5w
+	wZhsahBg95i23JF5FhvAGhEO+nY9fzYt+bhQZoAnCwmQnArBlDMQbmhxa0v4MqcQMpEJqHVV 
+	root@act-virtual-machine
+	root@act-virtual-machine:/home/thang/ftp/files# rm /root/.ssh/id_rsa
+	id_rsa      id_rsa.pub  
+	root@act-virtual-machine:/home/thang/ftp/files# rm /root/.ssh/id_rsa.pub 
+	root@act-virtual-machine:/home/thang/ftp/files# cd /root/.ssh/
+	authorized_keys  id_rsa           known_hosts 
+Bước 3: Test thử ssh:     
+	root@act-virtual-machine:/home/thang/ftp/files# ssh thang@192.168.88.146
+	Enter passphrase for key '/root/.ssh/id_rsa': 
+	Enter passphrase for key '/root/.ssh/id_rsa': 
+	thang@192.168.88.146's password: 
+
+
+

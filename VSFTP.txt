@@ -1,0 +1,101 @@
+﻿Cài đặt VSFTP:
+
+Bước 1: update và cài đặt gói
+	root@act-virtual-machine:/home/act# sudo apt update
+	root@act-virtual-machine:/home/act# sudo apt install vsftpd
+Bước 2: 
+	root@act-virtual-machine:/home/act# sudo cp /etc/vsftpd.conf /etc/vsftpd.conf.orig
+	root@act-virtual-machine:/home/act# sudo adduser thang
+	Adding user `thang' ...
+	Adding new group `thang' (1001) ...
+	Adding new user `thang' (1001) with group `thang' ...
+	Creating home directory `/home/thang' ...
+	Copying files from `/etc/skel' ...
+	Enter new UNIX password: 
+	Retype new UNIX password: 
+	passwd: password updated successfully
+	Changing the user information for thang
+	Enter the new value, or press ENTER for the default
+	Full Name []: ThangMai
+	Room Number []: IT
+	Work Phone []: 0987654321
+	Home Phone []:   
+	Other []: 
+	Is the information correct? [Y/n] Y
+
+Bước 3: Tạo thư mục để ftp từ thiết bị khác
+	root@act-virtual-machine:/home/act# sudo mkdir /home/thang/ftp
+	root@act-virtual-machine:/home/act# cd /home/thang/
+	root@act-virtual-machine:/home/thang# ls
+	examples.desktop  ftp
+	root@act-virtual-machine:/home/thang# chown nobody:nogroup ftp/
+	root@act-virtual-machine:/home/thang# ls -la
+	total 36
+	drwxr-xr-x 3 thang  thang   4096 Th07 14 14:45 .
+	drwxr-xr-x 4 root   root    4096 Th07 14 14:44 ..
+	-rw-r--r-- 1 thang  thang    220 Th07 14 14:44 .bash_logout
+	-rw-r--r-- 1 thang  thang   3771 Th07 14 14:44 .bashrc
+	-rw-r--r-- 1 thang  thang   8980 Th07 14 14:44 examples.desktop
+	drwxr-xr-x 2 nobody nogroup 4096 Th07 14 14:45 ftp
+	-rw-r--r-- 1 thang  thang    655 Th07 14 14:44 .profile
+	root@act-virtual-machine:/home/thang# chmod a-w ftp/
+	root@act-virtual-machine:/home/thang# ls -la
+	total 36
+	drwxr-xr-x 3 thang  thang   4096 Th07 14 14:45 .
+	drwxr-xr-x 4 root   root    4096 Th07 14 14:44 ..
+	-rw-r--r-- 1 thang  thang    220 Th07 14 14:44 .bash_logout
+	-rw-r--r-- 1 thang  thang   3771 Th07 14 14:44 .bashrc
+	-rw-r--r-- 1 thang  thang   8980 Th07 14 14:44 examples.desktop
+	dr-xr-xr-x 2 nobody nogroup 4096 Th07 14 14:45 ftp
+	-rw-r--r-- 1 thang  thang    655 Th07 14 14:44 .profile
+	root@act-virtual-machine:/home/thang# ls -la ftp/
+	total 8
+	dr-xr-xr-x 2 nobody nogroup 4096 Th07 14 14:45 .
+	drwxr-xr-x 3 thang  thang   4096 Th07 14 14:45 ..
+	root@act-virtual-machine:/home/thang# mkdir ftp/files
+	root@act-virtual-machine:/home/thang# chown thang:thang ftp/files/
+	root@act-virtual-machine:/home/thang# echo "vsftpd test file" | sudo tee ftp/files/test.txt
+	vsftpd test file
+	root@act-virtual-machine:/home/thang# sudo nano /etc/vsftpd.conf
+	root@act-virtual-machine:/home/thang# sudo nano /etc/vsftpd.conf
+	root@act-virtual-machine:/home/thang# echo "thang" | sudo tee -a /etc/vsftpd.conf
+	vsftpd.conf       vsftpd.conf.orig  
+	root@act-virtual-machine:/home/thang# echo "thang" | sudo tee -a /etc/vsftpd.userlist
+	thang
+	root@act-virtual-machine:/home/thang# sudo systemctl restart vsftpd
+	root@act-virtual-machine:/home/thang# sudo systemctl status vsftpd
+	● vsftpd.service - vsftpd FTP server
+   	Loaded: loaded (/lib/systemd/system/vsftpd.service; enabled; vendor preset: enabled)
+   	Active: active (running) since CN 2019-07-14 15:04:53 +07; 10s ago
+  	Process: 6692 ExecStartPre=/bin/mkdir -p /var/run/vsftpd/empty (code=exited, status=0/SUCCESS)
+ 	Main PID: 6695 (vsftpd)
+   	CGroup: /system.slice/vsftpd.service
+           └─6695 /usr/sbin/vsftpd /etc/vsftpd.conf
+Bước 4: test kiểm tra
+	root@act-virtual-machine:/home/thang/ftp/files# chown thang:thang test.txt 
+	root@act-virtual-machine:/home/thang/ftp/files# ls -la
+	total 12
+	drwxr-xr-x 2 thang  thang   4096 Th07 14 14:51 .
+	dr-xr-xr-x 3 nobody nogroup 4096 Th07 14 14:50 ..
+	-rw-r--r-- 1 thang  thang     17 Th07 14 14:51 test.txt
+	\-----------------------------------------------------------\	
+	Vào CMD trên window: 
+ 	C:\Users\Student>ftp 192.168.88.146
+	Connected to 192.168.88.146.
+	220 (vsFTPd 3.0.3)
+	200 Always in UTF8 mode.
+	User (192.168.88.146:(none)): thang
+	331 Please specify the password.
+	Password:
+	230 Login successful.
+	ftp> 
+
+
+ Scope:Host
+          UP LOOPBACK RUNNING  MTU:65536  Metric:1
+          RX packets:553 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:553 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:45484 (45.4 KB)  TX bytes:45484 (45.4 KB)
+
+
